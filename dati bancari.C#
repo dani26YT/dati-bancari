@@ -1,0 +1,160 @@
+using System;
+using System.Collections.Generic;
+
+namespace SimpleBankingApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<BankAccount> accounts = new List<BankAccount>();
+
+            while (true)
+            {
+                Console.WriteLine("Benvenuto nella tua banca!");
+                Console.WriteLine("1. Crea un nuovo conto");
+                Console.WriteLine("2. Visualizza il saldo");
+                Console.WriteLine("3. Deposita fondi");
+                Console.WriteLine("4. Preleva fondi");
+                Console.WriteLine("5. Esci");
+
+                Console.Write("Scelta: ");
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        CreateAccount(accounts);
+                        break;
+                    case "2":
+                        DisplayBalance(accounts);
+                        break;
+                    case "3":
+                        DepositFunds(accounts);
+                        break;
+                    case "4":
+                        WithdrawFunds(accounts);
+                        break;
+                    case "5":
+                        Console.WriteLine("Arrivederci!");
+                        return;
+                    default:
+                        Console.WriteLine("Questa risposta non è valida. Riprova.");
+                        break;
+                }
+
+                Console.WriteLine();
+            }
+        }
+
+        static void CreateAccount(List<BankAccount> accounts)
+        {
+            Console.Write("Inserisci il nome del titolare del conto: ");
+            string ownerName = Console.ReadLine();
+            Console.Write("Inserisci l'importo iniziale: ");
+            decimal initialBalance = decimal.Parse(Console.ReadLine());
+
+            BankAccount newAccount = new BankAccount(ownerName, initialBalance);
+            accounts.Add(newAccount);
+
+            Console.WriteLine($"Il conto per {ownerName} è stato creato con successo.");
+        }
+
+        static void DisplayBalance(List<BankAccount> accounts)
+        {
+            Console.Write("Inserisci il nome del titolare del conto: ");
+            string ownerName = Console.ReadLine();
+
+            BankAccount account = FindAccount(accounts, ownerName);
+
+            if (account != null)
+            {
+                Console.WriteLine($"Saldo del conto di {account.OwnerName}: {account.Balance}");
+            }
+            else
+            {
+                Console.WriteLine($"Il conto di {ownerName} non esiste o non è disponibile. Per ricrearlo premi 1 ");
+            }
+        }
+
+        static void DepositFunds(List<BankAccount> accounts)
+        {
+            Console.Write("Inserisci il nome del titolare del conto: ");
+            string ownerName = Console.ReadLine();
+
+            BankAccount account = FindAccount(accounts, ownerName);
+
+            if (account != null)
+            {
+                Console.Write("Inserisci l'importo da depositare: ");
+                decimal amount = decimal.Parse(Console.ReadLine());
+
+                account.Deposit(amount);
+                Console.WriteLine($"Hai depositato {amount} nel conto di {account.OwnerName}. Saldo attuale: {account.Balance}");
+            }
+            else
+            {
+                Console.WriteLine($"Il conto di {ownerName} non esiste.");
+            }
+        }
+
+        static void WithdrawFunds(List<BankAccount> accounts)
+        {
+            Console.Write("Inserisci il nome del titolare del conto: ");
+            string ownerName = Console.ReadLine();
+
+            BankAccount account = FindAccount(accounts, ownerName);
+
+            if (account != null)
+            {
+                Console.Write("Inserisci l'importo da prelevare: ");
+                decimal amount = decimal.Parse(Console.ReadLine());
+
+                if (account.Withdraw(amount))
+                {
+                    Console.WriteLine($"Hai prelevato {amount} dal conto di {account.OwnerName}. Saldo attuale: {account.Balance}");
+                }
+                else
+                {
+                    Console.WriteLine("Fondi insufficienti per il prelievo.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Il conto di {ownerName} non esiste.");
+            }
+        }
+
+        static BankAccount FindAccount(List<BankAccount> accounts, string ownerName)
+        {
+            return accounts.Find(account => account.OwnerName == ownerName);
+        }
+    }
+
+    class BankAccount
+    {
+        public string OwnerName { get; }
+        public decimal Balance { get; private set; }
+
+        public BankAccount(string ownerName, decimal initialBalance)
+        {
+            OwnerName = ownerName;
+            Balance = initialBalance;
+        }
+
+        public void Deposit(decimal amount)
+        {
+            Balance += amount;
+        }
+
+        public bool Withdraw(decimal amount)
+        {
+            if (Balance >= amount)
+            {
+                Balance -= amount;
+                return true;
+            }
+            return false;
+        }
+    }
+}

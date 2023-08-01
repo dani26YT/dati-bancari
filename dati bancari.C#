@@ -11,7 +11,8 @@ namespace SimpleBankingApp
 
             while (true)
             {
-                Console.WriteLine("Benvenuto nella tua banca!");
+                Console.WriteLine("Benvenuto,");
+                Console.WriteLine("questa è un' app di gestione della banca, volatile");
                 Console.WriteLine("1. Crea un nuovo conto");
                 Console.WriteLine("2. Visualizza il saldo");
                 Console.WriteLine("3. Deposita fondi");
